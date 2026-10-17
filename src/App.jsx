@@ -1,7 +1,9 @@
+import Header from "./components/Header";
 export default function App() {
-  return (
-    <main className="wrap">
-      <h2 className="wish-name"> Starlit Wishes coming soon</h2>
-    </main>
-  );
+ return (
+ <>
+ <Header left={0} got={0} total="£0" />
+ <main className="wrap"></main>
+ </>
+ );
 }
