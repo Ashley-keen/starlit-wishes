@@ -214,7 +214,7 @@ input,select{
   color:var(--ink);
 }
 
-.list-tabs, .new-list {
+.list-tabs .new-list {
   border-style:dashed;
 }
 
