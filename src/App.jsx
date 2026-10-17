@@ -46,6 +46,17 @@ export default function App(){
         setActiveListId(list.id);
     }
 
+    function renameList(id, name) {
+        setLists((all) => all.map((l) => (l.id === id ? { ...l, name } : l)));
+    }
+
+    function deleteList(id) {
+      if (lists.length === 1) return;
+      setLists((all) => all.filter((l) => l.id !== id));
+      setWishes((all) => all.filter((w) => w.listId !== id));
+      setActiveListId(lists.find((l) => l.id !== id).id);
+    }
+
     const inList = wishes.filter((w) => w.listId === activeList.id);
       function toggleGot(id) {
         setWishes((all) => all.map((w) => (w.id === id ? { ...w, got: !w.got } : w)));
@@ -59,9 +70,10 @@ export default function App(){
     <>
       <Header left={wishes.length} got={0} total="£0" />
       <main className="wrap">
-        <ListPicker lists={lists} activeId={activeList.id}
-          onSelect={setActiveListId} onAdd={addList} />
-        <WishForm onAdd={addWish} />
+      <ListPicker lists={lists} activeId={activeList.id} count={inList.length}
+        onSelect={setActiveListId} onAdd={addList}
+        onRename={renameList} onDelete={deleteList} />
+      <WishForm onAdd={addWish} />
         <ul className="wish-list">
           {inList.map((wish) => (
             <WishCard key={wish.id} wish={wish}
