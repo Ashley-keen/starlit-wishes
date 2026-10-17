@@ -1,6 +1,9 @@
+import {useState} from "react";
 import {formatPrice} from "../utils";
 
 export default function WishCard ({wish, onToggle, onRemove}){
+    const [confirming, setConfirming] = useState(false);
+
     return(
         <li className={wish.got ? "wish got" : "wish"}>
             <button
@@ -23,9 +26,15 @@ export default function WishCard ({wish, onToggle, onRemove}){
                     {wish.url && (
                         <a href={wish.url} target="_blank" rel="noreferrer">Open Link</a>
                     )}
-                    <button className="link-btn" onClick={() => onRemove(wish.id)}>
-                        Remove
-                    </button>
+                    {confirming ? (
+                        <button className="link-btn danger" onClick={() => onRemove(wish.id)}>
+                            Tap again to remove
+                        </button>
+                        ) : (
+                        <button className="link-btn" onClick={() => setConfirming(true)}>
+                            Remove
+                        </button>
+                    )}
                 </div>
             </div>    
         </li>
