@@ -64,7 +64,7 @@ button{
 .tally{ 
   margin:10px 0 0;
   font-size: 13px;
-  letter-spacing: 0.6em;
+  letter-spacing: 0.06em;
   color: var(--star);
 }
 
@@ -94,6 +94,23 @@ button{
   font-size:22px;
   margin:0;
 }
+
+.wish-list {
+  list-style: none; 
+  margin: 0; 
+  padding: 0; 
+  display: grid; 
+  gap: 12px; 
+}
+
+.wish {
+  background: var(--card); 
+  border: 1px dashed var(--line); 
+  border-radius: 18px;
+  padding: 14px 16px; 
+  display: grid; 
+  grid-template-columns: auto 1fr; 
+  gap: 12px; }
 
 label{
   display:grid;

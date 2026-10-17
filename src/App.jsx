@@ -20,7 +20,7 @@ export default function App(){
     <>
       <Header left={wishes.length} got={0} total="£0" />
       <main className="wrap">
-        <wishForm onAdd={addWish} />
+        <WishForm onAdd={addWish} />
         <ul className="wish-list">
           {wishes.map((wish) => (
             <WishCard key={wish.id} wish={wish}

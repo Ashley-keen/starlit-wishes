@@ -32,7 +32,7 @@ useEffect(() => {
         for (const star of stars){
             star.phase +=star.speed;
             ctx.globalAlpha = 0.35+ 0.65 * Math.abs(Math.sin(star.phase));
-            ctx.fillStyle = "#f7e3al";
+            ctx.fillStyle = "#f7e3a1";
             ctx.beginPath();
             ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
             ctx.fill();
