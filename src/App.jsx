@@ -1,11 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import WishForm from "./components/WishForm";
 import WishCard from "./components/WishCard";
 import { sampleWishes } from "./data/sample";
 
+function load(key, fallback){
+  try{
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+    } catch {
+      return fallback;
+    }
+}
+
 export default function App(){
-  const [wishes, setWishes] =useState(sampleWishes);
+  const [wishes, setWishes] =useState(() => load ("wishes", sampleWishes));
+    useEffect(() =>{
+      localStorage.setItem("wishes", JSON.stringify(wishes));
+    }, [wishes]);
 
     function addWish(wish) {
       setWishes((all) => [{ ...wish, id: crypto.randomUUID(), got: false }, ...all]);
