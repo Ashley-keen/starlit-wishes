@@ -13,6 +13,29 @@
  --font-body: "Nunito", system-ui, sans-serif;
 }
 
+/* follow the device, unless you've picked light */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1c1628;  --card: #271e37;  --ink: #f6e6ee;  --muted: #b79bb0;
+    --ribbon: #f093ae;  --ribbon-soft: #4a2f47;  --night: #130e1d;
+    --line: #3b2c4c;
+    color-scheme: dark;
+  }
+}
+
+/* you picked dark */
+:root[data-theme="dark"] {
+  --bg: #1c1628;  --card: #271e37;  --ink: #f6e6ee;  --muted: #b79bb0;
+  --ribbon: #f093ae;  --ribbon-soft: #4a2f47;  --night: #130e1d;
+  --line: #3b2c4c;
+  color-scheme: dark;
+}
+
+/* the toggle button */
+.theme-toggle { position: absolute; top: 12px; right: 12px; z-index: 1;
+  background: rgba(255, 255, 255, 0.12); border: none; border-radius: 999px;
+  width: 36px; height: 36px; font-size: 16px; color: #ffe8ef; }
+
 * {box-sizing: border-box;}
 
 body { 
