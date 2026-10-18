@@ -122,6 +122,20 @@ export default function App() {
     if (error) return setMessage("Couldn't rename that list.");
     setLists((all) => all.map((l) => (l.id === id ? { ...l, name } : l)));
   }
+  async function shareList(id) {
+    const shareId = crypto.randomUUID();
+    const { error } = await supabase.from("lists")
+      .update({ share_id: shareId }).eq("id", id);
+    if (error) return setMessage("Couldn't share that list.");
+    setLists((all) => all.map((l) => (l.id === id ? { ...l, share_id: shareId } : l)));
+  }
+
+  async function stopSharing(id) {
+    const { error } = await supabase.from("lists")
+      .update({ share_id: null }).eq("id", id);               
+    if (error) return setMessage("Couldn't stop sharing that list.");
+    setLists((all) => all.map((l) => (l.id === id ? { ...l, share_id: null } : l)));
+  }
 
   async function deleteList(id) {
     if (lists.length === 1) return;
@@ -144,7 +158,8 @@ export default function App() {
       <main className="wrap">
         <ListPicker lists={lists} activeId={activeList.id} count={inList.length}
           onSelect={setActiveListId} onAdd={addList}
-          onRename={renameList} onDelete={deleteList} />
+          onRename={renameList} onDelete={deleteList}
+          onShare={shareList} onStopSharing={stopSharing} />
         <WishForm onAdd={addWish} />
         {message && <p className="error">{message}</p>}
         <div className="filters">

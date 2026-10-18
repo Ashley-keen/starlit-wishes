@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header({left, got, total}){
     const canvasRef= useRef(null);
@@ -56,6 +57,7 @@ useEffect(() => {
 
     return (
         <header className="header">
+            <ThemeToggle />
             <canvas ref={canvasRef} className="sky" aria-hidden="true"/>
             <div className="header-inner">
                 <svg className="bow" viewBox="0 0 46 26" aria-hidden="true">
