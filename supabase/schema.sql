@@ -26,3 +26,32 @@ create policy "Users manage their own lists" on lists for all
 
 create policy "Users manage their own wishes" on wishes for all
     using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+
+
+
+
+
+alter table lists add column share_id uuid unique;
+
+create or replace function get_shared_list(p_share_id uuid)
+returns json
+language sql
+security definer
+set search_path = public
+as $$
+    select json_build_object(
+        'name', l.name,
+        'wishes', coalesce((
+            select json_agg(json_build_object(
+                'id', w.id, 'name', w.name, 'url', w.url, 'price', w.price,
+                'category', w.category, 'hearts', w.hearts, 'got', w.got
+            ) order by w.created_at desc)
+            from wishes w where w.list_id = l.id
+        ), '[]'::json)
+    )
+    from lists l
+    where l.share_id = p_share_id;
+$$;
+
+grant execute on function get_shared_list(uuid) to anon, authenticated;

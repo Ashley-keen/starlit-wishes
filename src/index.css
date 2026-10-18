@@ -344,3 +344,9 @@ input,select{
   background: transparent; 
   color: var(--muted); 
 }
+
+.shared-title { font-family: var(--font-serif); font-size: 28px; margin: 0; }
+
+.shared-note { margin: -8px 0 0; color: var(--muted); font-size: 13px; }
+
+.wish.shared { grid-template-columns: 1fr; }
