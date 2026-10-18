@@ -312,3 +312,12 @@ input,select{
   font-style:italic;
   font-size:19px;
 }
+
+.move-select { 
+  width: auto; 
+  padding: 2px 8px; 
+  font-size: 13px;
+  border-radius: 999px; 
+  background: transparent; 
+  color: var(--muted); 
+}
