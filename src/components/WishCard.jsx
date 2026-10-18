@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {formatPrice} from "../utils";
 
-export default function WishCard ({wish, onToggle, onRemove}){
+export default function WishCard ({wish, lists, onToggle, onRemove, onMove}){
     const [confirming, setConfirming] = useState(false);
 
     return(
@@ -24,7 +24,16 @@ export default function WishCard ({wish, onToggle, onRemove}){
                 </p>
                 <div className="wish-actions">
                     {wish.url && (
-                        <a href={wish.url} target="_blank" rel="noreferrer">Open Link</a>
+                        <a href={wish.url} target="_blank" rel="noreferrer">Open link</a>
+                      )}
+                    {lists.length > 1 && (
+                        <select className="move-select" value={wish.listId}
+                            onChange={(e) => onMove(wish.id, e.target.value)}
+                            aria-label="Move to another list">
+                            {lists.map((l) => (
+                                <option key={l.id} value={l.id}>{l.name}</option>
+                            ))}
+                        </select>
                     )}
                     {confirming ? (
                         <button className="link-btn danger" onClick={() => onRemove(wish.id)}>
@@ -34,7 +43,7 @@ export default function WishCard ({wish, onToggle, onRemove}){
                         <button className="link-btn" onClick={() => setConfirming(true)}>
                             Remove
                         </button>
-                    )}
+                        )}
                 </div>
             </div>    
         </li>

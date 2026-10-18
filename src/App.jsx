@@ -101,6 +101,14 @@ export default function App() {
     setWishes((all) => all.filter((w) => w.id !== id));
   }
 
+  async function moveWish(id, listId) {                       
+    const { error } = await supabase.from("wishes")
+      .update({ list_id: listId }).eq("id", id);             
+    if (error) return setMessage("Couldn't move that wish.");
+    setWishes((all) =>
+      all.map((w) => (w.id === id ? { ...w, listId, list_id: listId } : w)));  
+  }
+
   async function addList(name) {
     const { data, error } = await supabase.from("lists")
       .insert({ name }).select().single();
@@ -151,8 +159,7 @@ export default function App() {
         ) : (
           <ul className="wish-list">
             {shown.map((wish) => (
-              <WishCard key={wish.id} wish={wish}
-                onToggle={toggleGot} onRemove={removeWish} />
+              <WishCard key={wish.id} wish={wish} lists={lists}onToggle={toggleGot} onRemove={removeWish} onMove={moveWish} />
             ))}
           </ul>
         )}
