@@ -1,16 +1,47 @@
-# React + Vite
+# Starlit Wishes
+A coquette, starry wish list app with separate lists that installs on your phone.
+**Live app:** https://starlit-wishes.netlify.app
+<img src="docs/homescreen.png" alt="Starlit Wishes on a phone" width="300" />
+## Features
+- Separate lists, e.g. Birthday, Christmas, Room makeover
+- Add wishes with a link, price, category and how much you want them
+- Tick wishes off when you get them, with totals of what's left
+- Installs to your home screen as a PWA
+## Built with
+React, Vite, CSS variables, vite-plugin-pwa, Netlify
+## Run it locally
+ npm install
+ npm run dev
+## How I built it
+Planned with GitHub Issues and a Projects board, one branch and
+pull request per issue.
+## What I learned
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+- **Planning work like a team.** I broke the app into 21 GitHub issues
+  on a project board and built each one on its own branch, merged through
+  a pull request. It made a big project feel manageable, one issue at a time.
 
-Currently, two official plugins are available:
+- **Modelling related data.** Lists and wishes are stored separately, and
+  each wish points to its list with a `listId`. Moving or deleting things
+  became much simpler, and it's the same idea as a foreign key in a database.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Keeping React state immutable.** I learned to create new arrays with
+  `map`, `filter` and the spread operator instead of changing state
+  directly, because React only re-renders when it sees a new value.
 
-## React Compiler
+- **Case sensitivity matters.** A saved key called `"Wishes"` didn't match
+  `"wishes"`, and lowercase file names worked on my Mac but would have
+  broken on Netlify's servers. I now keep naming consistent and component
+  files capitalised.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Reading errors properly.** Messages like "is not a function" or
+  "does not provide an export named" pointed straight at typos and import
+  mistakes once I learned to read the file and line number in the console.
 
-## Expanding the Oxlint configuration
+- **Default vs named exports.** `export default` is imported without braces;
+  named exports need `{ }`. Mixing them up caused some of my most
+  confusing bugs.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- **Validating user input.** Links typed without `https://` were treated as
+  pages on my own site, so I wrote a `cleanUrl` helper that fixes and
+  checks links before they're saved.
