@@ -5,6 +5,8 @@ import WishForm from "./components/WishForm";
 import WishCard from "./components/WishCard";
 import { sampleLists, sampleWishes } from "./data/sample";
 import {formatPrice} from "./utils";
+import { supabase } from "./lib/supabase";
+import Login from "./components/Login";
 
 function load(key, fallback){
   try{
@@ -25,8 +27,13 @@ export default function App(){
   const [lists, setLists] = useState(()=> load("lists", sampleLists));
   const [activeListId, setActiveListId] = useState(() => load("activeListId", lists[0].id));
   const [filter, setFilter] =useState("wishing");
+  const [session, setSession] = useState(null);
 
-
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
+    return () => data.subscription.unsubscribe();
+  }, []);
   useEffect(() =>{
     localStorage.setItem("wishes", JSON.stringify(wishes));
   }, [wishes]);
@@ -72,6 +79,14 @@ export default function App(){
   const shown =filter === "got" ? gotIt : filter === "all" ? inList : stillWishing;
   const totalLeft = stillWishing.reduce((sum,w) => sum + (w.price ?? 0), 0);
 
+  if (!session) {
+    return (
+      <>
+        <Header left={0} got={0} total="£0" />
+        <Login />
+      </>
+    );
+  }
 
   return (
     <>
@@ -98,6 +113,7 @@ export default function App(){
         ))}
       </ul>
     )}
+  <button className="link-btn" onClick={() => supabase.auth.signOut()}>Sign out</button> 
   </main>
     </>  
   ) ; 
