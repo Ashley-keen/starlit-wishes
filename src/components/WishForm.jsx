@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {cleanUrl} from "../utils";
 
 const CATEGORIES = ["Clothes", "Beauty", "Tech", "Treats", "Others"];
 
@@ -12,16 +13,32 @@ export default function WishForm ({onAdd}){
 
     function handleSubmit(event){
         event.preventDefault();
-        onAdd({
-            name, 
-            url, 
-            price : price ? Number(price):null, 
-            category, 
-            hearts 
-        });
+
+        if (!name.trim()) {
+            setError("Give your wish a name first.");
+            return;
+        }
+
+        let priceNumber =null;
+        if (price.trim()) {
+            priceNumber=Number(price.replace(/[£,\s]/g, ""));
+            if (!Number.isFinite(priceNumber) || priceNumber< 0){
+                setError("Price should be a number, like 12.99");
+                return;
+            }
+        }
+
+        const link = cleanUrl(url);
+        if (url.trim() && !link){
+            setError("That link doesn't look right. Try copying it again from the shop.");
+            return;
+        }
+
+        onAdd({ name: name.trim(), url: link, price: priceNumber, category, hearts });
         setName("");
         setUrl("");
         setPrice("");
+        setError("");
     }
 
     return (

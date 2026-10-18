@@ -49,7 +49,7 @@ export default function App(){
     setWishes((all) => all.map((w) =>(w.id === id ? {...w,got:!w.got} :w)));
   }
   function removeWish(id){
-    setWishes((all) => all.filters((w) => w.id !== id));
+    setWishes((all) => all.filter((w) => w.id !== id));
   }
   function addList(name) {
     const list = { id: crypto.randomUUID(), name };
