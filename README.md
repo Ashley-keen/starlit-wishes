@@ -99,3 +99,7 @@ I planned the app as 22 GitHub issues on a project board, split into three miles
 
 ---
 Made by [Ashley Keen](https://github.com/Ashley-keen) ✦
+
+### License ⋆.𐙚 ̊
+---
+This project is licensed under the [MIT License](LICENSE).
