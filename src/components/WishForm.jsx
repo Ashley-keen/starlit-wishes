@@ -11,22 +11,22 @@ export default function WishForm ({onAdd}){
     const [hearts, setHearts] = useState(2);
     const [error, setError] = useState("");
 
-    function handleSubmit(event){
-        event.preventDefault();
+     async function handleSubmit(event){
+            event.preventDefault();
 
-        if (!name.trim()) {
-            setError("Give your wish a name first.");
-            return;
-        }
-
-        let priceNumber =null;
-        if (price.trim()) {
-            priceNumber=Number(price.replace(/[£,\s]/g, ""));
-            if (!Number.isFinite(priceNumber) || priceNumber< 0){
-                setError("Price should be a number, like 12.99");
+            if (!name.trim()) {
+                setError("Give your wish a name first."); 
                 return;
             }
-        }
+
+            let priceNumber =null;
+            if (price.trim()) {
+                priceNumber=Number(price.replace(/[£,\s]/g, ""));
+                if (!Number.isFinite(priceNumber) || priceNumber< 0){
+                    setError("Price should be a number, like 12.99");
+                    return;
+                }
+            }
 
         const link = cleanUrl(url);
         if (url.trim() && !link){
@@ -34,7 +34,16 @@ export default function WishForm ({onAdd}){
             return;
         }
 
-        onAdd({ name: name.trim(), url: link, price: priceNumber, category, hearts });
+        let image = null;
+        if (link) {
+            try {
+                const res = await fetch("/.netlify/functions/preview?url=" + encodeURIComponent(link));
+                if (res.ok) image = (await res.json()).image;
+            } catch {
+            }
+        }
+
+        onAdd({ name: name.trim(), url: link, price: priceNumber, category, hearts, image });
         setName("");
         setUrl("");
         setPrice("");

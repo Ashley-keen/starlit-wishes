@@ -13,7 +13,11 @@ export default function WishCard ({wish, lists, onToggle, onRemove, onMove}){
             >
                 {wish.got ? "\u2726" : ""}
             </button>
-            <div className="wish-body">
+                <div className="wish-body">
+                    {wish.image && (
+                        <img className="wish-img" src={wish.image} alt=""
+                            onError={(e) => (e.currentTarget.hidden = true)} />
+                        )}
                 <h3 className="wish-name">{wish.name}</h3>
                 <p className="wish-meta">
                     {typeof wish.price === "number" && (

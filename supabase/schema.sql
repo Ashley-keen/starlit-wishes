@@ -55,3 +55,6 @@ as $$
 $$;
 
 grant execute on function get_shared_list(uuid) to anon, authenticated;
+
+
+alter table wishes add column image text;
