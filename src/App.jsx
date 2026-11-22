@@ -6,6 +6,7 @@ import WishCard from "./components/WishCard";
 import Login from "./components/Login";
 import { formatPrice } from "./utils";
 import { supabase } from "./lib/supabase";
+import MemberList from "./components/MemberList";
 
 const FILTERS = [
   { id: "wishing", label: "Still wishing" },
@@ -23,6 +24,7 @@ export default function App() {
   const [activeListId, setActiveListId] = useState(null);
   const [filter, setFilter] = useState("wishing");
   const [message, setMessage] = useState("");
+  const [members, setMembers] = useState([]);
 
   // keep track of whether you're logged in
   useEffect(() => {
@@ -35,6 +37,15 @@ export default function App() {
   useEffect(() => {
     if (!session) return;
     async function loadAll() {
+      const joinCode = new URLSearchParams(window.location.search).get("join");
+      let joinedId = null;
+      if (joinCode) {
+        const { data, error } = await supabase.rpc("join_list", { p_code: joinCode });
+        window.history.replaceState(null, "", window.location.pathname); // tidy the address bar
+      if (error) setMessage("That invite link didn't work. Ask for a new one.");
+      else joinedId = data;
+      }
+
       let { data: listRows, error } = await supabase
         .from("lists").select("*").order("created_at");
       if (error) return setMessage("Couldn't load your lists.");
@@ -52,10 +63,17 @@ export default function App() {
 
       setLists(listRows);
       setWishes(wishRows.map(fromRow));
-      setActiveListId(listRows[0].id);
+      setActiveListId(joinedId ?? listRows[0].id);
     }
     loadAll();
   }, [session]);
+
+  // load who's collaborating on the list you're looking at  
+    useEffect(() => {
+    if (!session || !activeListId) return;
+    supabase.from("list_members").select("user_id, email").eq("list_id", activeListId)
+      .then(({ data }) => setMembers(data ?? []));
+  }, [session, activeListId]);
 
   // logged out: show the sign-in form
   if (!session) {
@@ -78,6 +96,7 @@ export default function App() {
   }
 
   const activeList = lists.find((l) => l.id === activeListId) ?? lists[0];
+    const isOwner = activeList.user_id === session.user.id;  
 
   async function addWish(wish) {
     const { data, error } = await supabase.from("wishes")
@@ -146,6 +165,25 @@ export default function App() {
     setActiveListId(lists.find((l) => l.id !== id).id);
   }
 
+  async function leaveList(id) {
+    if (lists.length === 1) {
+      return setMessage("Make a list of your own before leaving this one.");
+    }
+    const { error } = await supabase.from("list_members").delete()
+      .eq("list_id", id).eq("user_id", session.user.id);
+    if (error) return setMessage("Couldn't leave that list.");
+    setLists((all) => all.filter((l) => l.id !== id));
+    setWishes((all) => all.filter((w) => w.listId !== id));
+    setActiveListId(lists.find((l) => l.id !== id).id);
+  }
+
+  async function removeMember(userId) {
+    const { error } = await supabase.from("list_members").delete()
+    .eq("list_id", activeList.id).eq("user_id", userId);
+    if (error) return setMessage("Couldn't remove that person.");
+    setMembers((all) => all.filter((m) => m.user_id !== userId));
+  }
+
   const inList = wishes.filter((w) => w.listId === activeList.id);
   const stillWishing = inList.filter((w) => !w.got);
   const gotIt = inList.filter((w) => w.got);
@@ -156,10 +194,12 @@ export default function App() {
     <>
       <Header left={stillWishing.length} got={gotIt.length} total={formatPrice(totalLeft)} />
       <main className="wrap">
-        <ListPicker lists={lists} activeId={activeList.id} count={inList.length}
-          onSelect={setActiveListId} onAdd={addList}
-          onRename={renameList} onDelete={deleteList}
-          onShare={shareList} onStopSharing={stopSharing} />
+      <ListPicker lists={lists} activeId={activeList.id} count={inList.length}
+        userId={session.user.id}
+        onSelect={setActiveListId} onAdd={addList}
+        onRename={renameList} onDelete={deleteList}
+        onShare={shareList} onStopSharing={stopSharing} onLeave={leaveList} />
+        <MemberList members={members} isOwner={isOwner} userId={session.user.id} onRemove={removeMember} />
         <WishForm onAdd={addWish} />
         {message && <p className="error">{message}</p>}
         <div className="filters">
